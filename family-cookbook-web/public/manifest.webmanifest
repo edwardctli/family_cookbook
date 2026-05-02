@@ -1,0 +1,17 @@
+{
+  "name": "Family Cookbook",
+  "short_name": "Cookbook",
+  "description": "Shared recipes, shopping, and cooking notes for your household.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6efe6",
+  "theme_color": "#f6efe6",
+  "icons": [
+    {
+      "src": "/pwa-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
