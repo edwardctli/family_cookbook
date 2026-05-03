@@ -977,7 +977,11 @@
 
 @media (max-width: 960px) {
   .app-shell {
-    padding: max(0.75rem, env(safe-area-inset-top)) 1rem calc(5.5rem + env(safe-area-inset-bottom));
+    padding:
+      max(3.75rem, calc(env(safe-area-inset-top) + 0.9rem))
+      max(1.15rem, calc(env(safe-area-inset-left) + 1.05rem))
+      calc(5.5rem + env(safe-area-inset-bottom))
+      max(1.15rem, calc(env(safe-area-inset-right) + 1.05rem));
   }
 
   .app-header,
@@ -1010,7 +1014,12 @@
   .recipe-list-heading {
     align-items: flex-start;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.85rem;
+    grid-template-columns: 1fr;
+  }
+
+  .recipe-list-heading .icon-action-row {
+    justify-content: flex-start;
   }
 
   .recipe-page-heading {
@@ -1034,10 +1043,10 @@
     bottom: max(0.75rem, env(safe-area-inset-bottom));
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    left: 1rem;
+    left: max(1.15rem, calc(env(safe-area-inset-left) + 1.05rem));
     overflow: hidden;
     position: fixed;
-    right: 1rem;
+    right: max(1.15rem, calc(env(safe-area-inset-right) + 1.05rem));
     top: auto;
     z-index: 15;
   }
@@ -1078,6 +1087,22 @@
 
   .recipe-controls {
     grid-template-columns: minmax(0, 1fr) auto auto auto;
+    gap: 0.35rem;
+  }
+
+  .recipe-controls .icon-button,
+  .recipe-list-heading .icon-button {
+    height: 2.25rem;
+    width: 2.25rem;
+  }
+
+  .search-field {
+    padding: 0 0.65rem;
+  }
+
+  .search-field input {
+    font-size: 0.95rem;
+    padding: 0.62rem 0;
   }
 
   .detail-stack {
