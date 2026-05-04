@@ -137,6 +137,7 @@ function App() {
   const [authMode, setAuthMode] = useState<'sign-in' | 'sign-up'>('sign-in')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [invitePasscode, setInvitePasscode] = useState('')
   const [authMessage, setAuthMessage] = useState<string | null>(null)
   const [displayNameDraft, setDisplayNameDraft] = useState('')
   const [isSavingProfile, setIsSavingProfile] = useState(false)
@@ -690,7 +691,30 @@ function App() {
       return
     }
 
-    const { data, error } = await supabase.auth.signUp({
+    if (!invitePasscode.trim()) {
+      setAuthMessage('Invite passcode is required to create an account.')
+      return
+    }
+
+    const { data: inviteData, error: inviteError } = await supabase.functions.invoke('invite-signup', {
+      body: {
+        email: trimmedEmail,
+        password,
+        invitePasscode: invitePasscode.trim(),
+      },
+    })
+
+    if (inviteError) {
+      setAuthMessage(inviteError.message)
+      return
+    }
+
+    if (inviteData?.error) {
+      setAuthMessage(String(inviteData.error))
+      return
+    }
+
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: trimmedEmail,
       password,
     })
@@ -701,18 +725,14 @@ function App() {
     }
 
     if (!data.user) {
-      setAuthMessage('Account created. Sign in once email confirmation is complete.')
-      return
-    }
-
-    if (!data.session) {
-      setAuthMessage('Account created. If email confirmation is enabled, confirm the email and then sign in.')
+      setAuthMessage('Account was created, but sign-in did not return a user session.')
       return
     }
 
     await adoptSignedInSession(data.user.email ?? trimmedEmail, data.user.id)
     setEmail('')
     setPassword('')
+    setInvitePasscode('')
   }
 
   async function handleSaveProfile() {
@@ -1364,7 +1384,24 @@ function App() {
                 />
               </label>
 
-              <button className="primary-button" type="submit">
+              {authMode === 'sign-up' ? (
+                <label>
+                  Invite Passcode
+                  <input
+                    type="password"
+                    value={invitePasscode}
+                    onChange={(event) => setInvitePasscode(event.target.value)}
+                    autoComplete="one-time-code"
+                    required
+                  />
+                </label>
+              ) : null}
+
+              <button
+                className="primary-button"
+                type="submit"
+                disabled={authMode === 'sign-up' && !invitePasscode.trim()}
+              >
                 {authMode === 'sign-in' ? 'Sign In' : 'Create Account'}
               </button>
             </form>
